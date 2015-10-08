@@ -5,6 +5,7 @@ import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
 import de.fhpotsdam.unfolding.providers.Google;
+import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 
@@ -77,7 +78,9 @@ public class HelloWorld extends PApplet
 		// TODO: Add code here that creates map2 
 		// Then you'll modify draw() below
 		AbstractMapProvider provider_2 = new Microsoft.AerialProvider();
-		map2 = new UnfoldingMap(this, 400, 50, 350, 500, provider);
+		map2 = new UnfoldingMap(this, 400, 50, 350, 500, provider_2);
+	    map2.zoomAndPanTo(zoomLevel, new Location(33.882731f, -117.875023f));
+		MapUtils.createDefaultEventDispatcher(this, map2);
         
 
 	}
