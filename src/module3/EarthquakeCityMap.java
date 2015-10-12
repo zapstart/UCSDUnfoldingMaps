@@ -65,39 +65,55 @@ public class EarthquakeCityMap extends PApplet {
 		
 	    map.zoomToLevel(2);
 	    MapUtils.createDefaultEventDispatcher(this, map);	
-			
-	    // The List you will populate with new SimplePointMarkers
-	    List<Marker> markers = new ArrayList<Marker>();
 
 	    //Use provided parser to collect properties for each earthquake
 	    //PointFeatures have a getLocation method
+        
+        /****************************************************************************************
+        // PointFeature: 
+        // Field: 
+        //       1) location   : The location of this point feature
+        //       2) properties : Fields inherited from class de.fhpotsdam.unfolding.data.Feature 
+        //                       Stores data properties        
+        ****************************************************************************************/
 	    List<PointFeature> earthquakes = ParseFeed.parseEarthquake(this, earthquakesURL);
 	    
-	    // These print statements show you (1) all of the relevant properties 
-	    // in the features, and (2) how to get one property and use it
-	    if (earthquakes.size() > 0) {
-	    	PointFeature f = earthquakes.get(0);
-	    	System.out.println(f.getProperties());
-	    	Object magObj = f.getProperty("magnitude");
-	    	float mag = Float.parseFloat(magObj.toString());
-	    	// PointFeatures also have a getLocation method
-	    }
-	    
-	    // Here is an example of how to use Processing's color method to generate 
-	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
-	    
-	    //TODO: Add code here as appropriate
+        // set points color and size
+        int blue     = color(0, 0, 255);
+	    int yellow   = color(255, 255, 0);
+        int red      = color(255, 0, 0);
+        float small  = (float) 4.0; 
+        float medium = (float) 8.0;
+        float large  = (float) 12.0;  
+        
+        // draw points 
+	    for (PointFeature f : earthquakes) {
+	    	float mag = Float.parseFloat(f.getProperty("magnitude").toString());
+            SimplePointMarker one_simple_marker;
+            
+            if (mag < 4.0) {
+	            one_simple_marker = createMarker(f);
+	            one_simple_marker.setColor(blue);
+	            one_simple_marker.setRadius(small);
+            }
+            else if (mag >= 4.0 && mag < 5.0) {
+	            one_simple_marker = createMarker(f);
+	            one_simple_marker.setColor(yellow);
+	            one_simple_marker.setRadius(medium);
+            }
+            else {
+	           one_simple_marker = createMarker(f);
+	           one_simple_marker.setColor(red);
+	           one_simple_marker.setRadius(large);
+            }
+	        
+            map.addMarker(one_simple_marker);	            
+        }
 	}
 		
-	// A suggested helper method that takes in an earthquake feature and 
-	// returns a SimplePointMarker for that earthquake
-	// TODO: Implement this method and call it from setUp, if it helps
-	private SimplePointMarker createMarker(PointFeature feature)
-	{
-		// finish implementing and use this method, if it helps.
-		return new SimplePointMarker(feature.getLocation());
-	}
+	private SimplePointMarker createMarker(PointFeature feature) {
+	    return new SimplePointMarker(feature.getLocation());
+    }
 	
 	public void draw() {
 	    background(10);
@@ -107,10 +123,20 @@ public class EarthquakeCityMap extends PApplet {
 
 
 	// helper method to draw key in GUI
-	// TODO: Implement this method to draw the key
-	private void addKey() 
-	{	
-		// Remember you can use Processing's graphics methods here
-	
-	}
+	private void addKey() {	
+		fill(255, 255, 255);
+		rect(10, 50, 170, 180);
+	    fill(255, 0, 0);
+        ellipse(20, 105, 15, 15);   
+	    fill(255, 255, 0);
+        ellipse(20, 145, 10, 10); 
+	    fill(0, 0, 255);
+        ellipse(20, 185, 5, 5); 
+        fill(0, 0, 255);
+		textSize(15);
+		text("Earthquake Key", 33, 70);
+		text("5.0 + Magnitude", 33, 110);
+		text("4.0 + Magnitude", 33, 150);
+		text("Below 4.0", 33, 190);
+    }
 }
