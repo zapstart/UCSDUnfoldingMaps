@@ -68,26 +68,70 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
+            
+            /*############################################################# 
+            public UnfoldingMap(processing.core.PApplet p,
+                            float x,
+                            float y,
+                            float width,
+                            float height,
+                            AbstractMapProvider provider)
+            
+            Creates a new map with specific position and dimension.
+            
+            Parameters:
+                p - The main applet.
+                x - The x position of this map.
+                y - The y position of this map.
+                width - The width of this map.
+                height - The height of this map.
+                provider - The map tiles provider to use.
+            #############################################################*/ 
 			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
-			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
-		    //earthquakesURL = "2.5_week.atom";
 		}
 		MapUtils.createDefaultEventDispatcher(this, map);
 		
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
-		//earthquakesURL = "test1.atom";
-		//earthquakesURL = "test2.atom";
+		// earthquakesURL = "test1.atom";
+		// earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		// earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
 	    //     STEP 1: load country features and markers
-		List<Feature> countries = GeoJSONReader.loadData(this, countryFile);
-		countryMarkers = MapUtils.createSimpleMarkers(countries);
-		
+        
+        /*####################################################################### 
+        public static java.util.List<Feature> loadData(processing.core.PApplet p,
+                                                       java.lang.String fileName)
+        
+            Parses a GeoJSON String and creates features for them.
+        
+            Parameters:
+                p - The PApplet.
+                fileName - The name of the GeoJSON file. 
+            Returns:
+                A list of features.
+        #######################################################################*/ 
+        List<Feature> countries = GeoJSONReader.loadData(this, countryFile);
+        
+        /*####################################################################### 
+        public static java.util.List<Marker> createSimpleMarkers(java.util.List<Feature> features)
+
+        Creates Unfolding's simple markers from features. (without the need to create a MarkerFactory)
+
+        Parameters:
+            features - The features to get markers for. 
+        Returns:
+            A list of markers.
+            Example: [{name = Afghanistan}, {name = xxx}, ...]
+        #######################################################################*/ 
+        countryMarkers = MapUtils.createSimpleMarkers(countries);
+	    
+        
+
 		//     STEP 2: read in city data
 		List<Feature> cities = GeoJSONReader.loadData(this, cityFile);
 		cityMarkers = new ArrayList<Marker>();
@@ -161,11 +205,12 @@ public class EarthquakeCityMap extends PApplet {
 	// and returns true.  Notice that the helper method isInCountry will
 	// set this "country" property already.  Otherwise it returns false.
 	private boolean isLand(PointFeature earthquake) {
-		
+        	
 		// IMPLEMENT THIS: loop over all countries to check if location is in any of them
-		
-		// TODO: Implement this method using the helper method isInCountry
-		
+        for (Marker m : countryMarkers) {
+	        if (isInCountry(earthquake, m)) return true; 
+        }   
+
 		// not inside any country
 		return false;
 	}
@@ -178,10 +223,15 @@ public class EarthquakeCityMap extends PApplet {
 	// And LandQuakeMarkers have a "country" property set.
 	private void printQuakes() 
 	{
-		// TODO: Implement this method
-	}
-	
-	
+        for (Marker m1 : countryMarkers) {
+            int numEarthquakes = 0;
+            for (Marker m2 : quakeMarkers) {
+                if (m2.getProperty("country") == m1.getProperty("name")) 
+                    numEarthquakes++;
+            } 
+            System.out.println(m1.getProperty("name") + " : " + numEarthquakes);
+        }
+    }
 	
 	// helper method to test whether a given earthquake is in a given country
 	// This will also add the country property to the properties of the earthquake 
