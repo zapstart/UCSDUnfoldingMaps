@@ -38,7 +38,6 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	
 	// abstract method implemented in derived classes
 	public abstract void drawEarthquake(PGraphics pg, float x, float y);
-		
 	
 	// constructor
 	public EarthquakeMarker (PointFeature feature) 
@@ -49,6 +48,7 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 		float magnitude = Float.parseFloat(properties.get("magnitude").toString());
 		properties.put("radius", 2*magnitude );
 		setProperties(properties);
+		System.out.println(this.getProperty("age"));
 		this.radius = 1.75f*getMagnitude();
 	}
 	
@@ -65,19 +65,36 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 		drawEarthquake(pg, x, y);
 		
 		// OPTIONAL TODO: draw X over marker if within past day		
-		
+        drawPastHour(pg, x, y);
+
 		// reset to previous styling
 		pg.popStyle();
 		
 	}
+    
+    private void drawPastHour(PGraphics pg, float x, float y) {
+        if (((String) this.getProperty("age")).equals("Past Week")) {
+        	pg.fill(0, 0, 0);
+            pg.line(x - this.radius, y - this.radius, x + this.radius, y + this.radius);
+            pg.line(x - this.radius, y + this.radius, x + this.radius, y - this.radius);
+        } 
+    }    
 	
-	// determine color of marker from depth
+    // determine color of marker from depth
 	// We suggest: Deep = red, intermediate = blue, shallow = yellow
 	// But this is up to you, of course.
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
-		//TODO: Implement this method
-	}
+        if (this.getDepth() >=  THRESHOLD_DEEP) { 
+            pg.fill(255, 0, 0);
+        }
+        else if (this.getDepth() < THRESHOLD_DEEP && this.getDepth() >= THRESHOLD_INTERMEDIATE) {
+           pg.fill(0, 0, 255); 
+        }
+        else {
+            pg.fill(255, 255, 0); 
+        }
+    }
 	
 	
 	/*
