@@ -145,8 +145,14 @@ public class EarthquakeCityMap extends PApplet {
 	// 
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
-		// TODO: Implement this method
-	}
+        for (Marker marker_item : markers) {
+            if (lastSelected == null && marker_item.isInside(map, this.mouseX, this.mouseY)) {
+                marker_item.setSelected(true);
+                lastSelected = (CommonMarker) marker_item;
+                return; 
+            }    
+        }
+    }
 	
 	/** The event handler for mouse clicks
 	 * It will display an earthquake and its threat circle of cities

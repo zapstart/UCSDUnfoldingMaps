@@ -93,8 +93,15 @@ public abstract class EarthquakeMarker extends CommonMarker
 	@Override
 	public void showTitle(PGraphics pg, float x, float y)
 	{
-		// TODO: Implement this method
-		
+        // Save previous drawing style
+	    pg.pushStyle();
+        
+        if (this.isSelected()) {
+            pg.text("quake", x, y);
+        }
+        	
+		// Restore previous drawing style
+		pg.popStyle();
 	}
 
 	
