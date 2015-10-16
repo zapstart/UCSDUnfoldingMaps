@@ -62,7 +62,10 @@ public class EarthquakeCityMap extends PApplet {
 	private CommonMarker lastSelected;
 	private CommonMarker lastClicked;
 	
-	public void setup() {		
+    private boolean isQuakeClicked = false; 
+    private boolean isCityClicked = false;	
+    
+    public void setup() {		
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -162,11 +165,79 @@ public class EarthquakeCityMap extends PApplet {
 	@Override
 	public void mouseClicked()
 	{
-		// TODO: Implement this method
-		// Hint: You probably want a helper method or two to keep this code
-		// from getting too long/disorganized
-	}
+		clickHelper();
+    }
+
+    private void clickHelper() {
+        clickQuake();
+        clickCity();
+    } 
+    
+    private void clickQuake() {
+        Marker temp = null;
+
+        for (Marker marker : quakeMarkers) {
+            if (marker.isInside(map, this.mouseX, this.mouseY) && marker.isHidden() == false) {
+                temp = marker;
+                break;
+            }
+        }
+
+        if (temp != null) {
+            if (isCityClicked == false && isQuakeClicked == false) {
+                for (Marker marker : quakeMarkers) {
+                    if (marker != temp) {
+                        marker.setHidden(true); 
+                    } 
+                }
+
+                for (Marker marker : cityMarkers) {
+                     if (marker.getLocation().getDistance(temp.getLocation()) > ((EarthquakeMarker) temp).threatCircle()) {
+                         marker.setHidden(true); 
+                     }
+                }
+
+                isQuakeClicked = true;
+            }
+            else if (isQuakeClicked){
+            	isQuakeClicked = false;
+                this.unhideMarkers();
+            }  
+        }
+    }
 	
+    private void clickCity() {
+        Marker temp = null;
+
+        for (Marker marker : cityMarkers) {
+            if (marker.isInside(map, this.mouseX, this.mouseY) && marker.isHidden() == false) {
+                temp = marker;
+                break;
+            }
+        } 
+        
+        if (temp != null) {
+            if (isCityClicked == false && isQuakeClicked == false) {
+                for (Marker marker : cityMarkers) {
+                    if (marker != temp) {
+                        marker.setHidden(true); 
+                    } 
+                }
+
+                for (Marker marker : quakeMarkers) {
+                     if (marker.getLocation().getDistance(temp.getLocation()) > ((EarthquakeMarker) marker).threatCircle()) {
+                         marker.setHidden(true); 
+                     }
+                }
+
+                isCityClicked = true;
+            }
+            else if (isCityClicked){
+            	isCityClicked = false;
+                this.unhideMarkers();
+            }  
+        }
+    }
 	
 	// loop over and unhide all markers
 	private void unhideMarkers() {
