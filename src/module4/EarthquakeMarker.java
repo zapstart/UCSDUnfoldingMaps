@@ -48,7 +48,6 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 		float magnitude = Float.parseFloat(properties.get("magnitude").toString());
 		properties.put("radius", 2*magnitude );
 		setProperties(properties);
-		System.out.println(this.getProperty("age"));
 		this.radius = 1.75f*getMagnitude();
 	}
 	
